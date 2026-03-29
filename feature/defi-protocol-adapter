@@ -1,0 +1,24 @@
+// TaxSavingsDashboard.js
+import React from 'react';
+
+const TaxSavings = ({ opportunities }) => {
+  const taxRate = 0.20; // Example 20% Capital Gains tax
+
+  return (
+    <div className="p-6 bg-slate-900 text-white rounded-lg">
+      <h2 className="text-2xl font-bold mb-4">Tax Loss Harvesting 📉</h2>
+      <p className="text-gray-400 mb-6">Sell these assets now to offset your gains.</p>
+      
+      <div className="grid gap-4">
+        {opportunities.map((opt) => (
+          <div key={opt.ticker} className="flex justify-between border-b border-gray-700 pb-2">
+            <span>{opt.ticker}</span>
+            <span className="text-green-400">
+              Save up to ${(opt.potential_harvest * taxRate).toLocaleString()} in taxes
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
