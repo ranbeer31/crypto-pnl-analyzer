@@ -1,0 +1,28 @@
+# tax_service.py
+
+def get_tax_loss_opportunities(user_id, current_prices):
+    """
+    Scans PostgreSQL for assets worth LESS than their purchase price.
+    current_prices: {'BTC': 60000, 'ETH': 3000}
+    """
+    # 1. Fetch all assets the user currently holds
+    holdings = db.query("SELECT ticker, avg_cost_basis, total_quantity FROM portfolios WHERE user_id = %s", (user_id,))
+    
+    opportunities = []
+    
+    for coin in holdings:
+        ticker = coin['ticker']
+        market_price = current_prices.get(ticker, 0)
+        
+        # 2. Calculate the "Loss" if they sold right now
+        if market_price < coin['avg_cost_basis']:
+            unrealized_loss = (coin['avg_cost_basis'] - market_price) * coin['total_quantity']
+            
+            opportunities.append({
+                "ticker": ticker,
+                "potential_harvest": unrealized_loss,
+                "current_price": market_price,
+                "cost_basis": coin['avg_cost_basis']
+            })
+            
+    return opportunities
